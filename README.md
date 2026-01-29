@@ -8,6 +8,6 @@
 
 ## Next steps
 
-- Make it work locally when restarting the shiny app application.
+- Make "check status" button even when restarting the shiny app application.
 - Could be useful to test it with posit connect.
 
