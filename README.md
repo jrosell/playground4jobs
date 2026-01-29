@@ -9,5 +9,6 @@
 ## Next steps
 
 - Make "check status" button even when restarting the shiny app application.
+- Let the user select diferent datasets.
 - Could be useful to test it with posit connect.
 
