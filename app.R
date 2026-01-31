@@ -133,8 +133,7 @@ server <- function(input, output, session) {
         
     key <- last_key()
     if(is.null(key)) {
-      status_msg(paste("Job not found."))
-      return()
+      key <- paste0(digest::digest(input$guid), digest::digest(example_data))
     }
 
     result_file <- here::here("outputs", key, paste0("result_", key, ".rds"))
