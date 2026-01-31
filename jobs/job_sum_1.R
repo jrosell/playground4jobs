@@ -21,7 +21,7 @@ lapply(libs, library, quiet = TRUE, character.only = TRUE) |> invisible()
 # Run ----
 guid <- "job_sum_1.R"
 job_key <- Sys.getenv("JOB_KEY", NA)
-data <- read_rds(here::here("input_data.rds"))
+data <- read_rds("input_data.rds")
 
 if (is.na(job_key)) {
   stop("The environment variable JOB_KEY must be set.")
@@ -36,9 +36,9 @@ if (calculated_key != job_key) {
 result <- data + 1L
 
 cat("Simulate a long-running job", "\n")
-Sys.sleep(20)
+Sys.sleep(30)
 
-result_file <- here::here(paste0("result_", job_key, ".rds"))
+result_file <- paste0("result_", job_key, ".rds")
 unlink(result_file)
 write_rds(result, result_file)
 

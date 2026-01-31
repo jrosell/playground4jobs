@@ -105,6 +105,10 @@ server <- function(input, output, session) {
     last_id()
   })
  
+  output$job_results <- renderTable({
+    tibble(data = integer(0))
+  })
+  
   observeEvent(input$submit_btn, {
     cat("start submit_btn", "\n")    
     status_msg("Submitting the job.")
@@ -113,11 +117,16 @@ server <- function(input, output, session) {
     try({
       job_id <- submit_content(input$guid, example_data)
       last_id(job_id)
-      job_key <- paste0(digest::digest(input$guid), digest::digest(example_data))
-      last_key(job_key)     
+      key <- paste0(digest::digest(input$guid), digest::digest(example_data))
+      last_key(key)     
+      cat("key:", key, "\n")
       status_msg("Job submitted.")
     })
     
+    output$job_results <- renderTable({
+      tibble(data = integer(0))
+    })
+
     cat("end submit_btn", "\n")
     NULL
   })
@@ -125,32 +134,42 @@ server <- function(input, output, session) {
   observeEvent(input$check_btn, {
     cat("start check_btn", "\n")    
     
+    
+    key <- paste0(digest::digest(input$guid), digest::digest(example_data))    
+    cat("key:", key, "\n")
+
+    last_guid(input$guid)
+    last_key(key)
+  
     local_running <- get_local_running()
     output$job_running <- renderTable({     
       local_running |> 
         filter(str_detect(cmdline, input$guid))
-    })
-        
-    key <- last_key()
-    if(is.null(key)) {
-      key <- paste0(digest::digest(input$guid), digest::digest(example_data))
+    })    
+
+    
+    result_file <- here::here("outputs", key, paste0("result_", key, ".rds"))
+    finished <- file.exists(result_file)    
+    if(finished) {
+      output$job_results <- renderTable({
+            read_rds(here::here("outputs", key, paste0("result_", key, ".rds")))
+      })
+      status_msg(paste("Results available."))      
+      return()
     }
 
-    result_file <- here::here("outputs", key, paste0("result_", key, ".rds"))
-    finished <- file.exists(result_file)
-
-    if(!finished) {
-      ids <- get_running_ids(input$guid)    
+    ids <- get_running_ids(input$guid)
+    if (length(ids) == 0) {
       status_msg(
-        paste("ℹJob is running. Active PIDs:", paste(ids, collapse = ", "))
+        paste("Job is not running.")
       )
       return()
     }
-    output$job_results <- renderTable({
-          read_rds(here::here("outputs", key, paste0("result_", key, ".rds")))
-    })
-    status_msg(paste("Results available."))
 
+    status_msg(
+      paste("Job is running. Active PIDs:", paste(ids, collapse = ", "))
+    )
+    
     cat("end check_btn", "\n")
     NULL
   })
