@@ -5,11 +5,8 @@ pkgs <- rlang::chr(
   "shiny",
   "digest",
   "ps",
-  "callr",
   "dplyr",
   "stringr",
-  "connectapi",
-  "dplyr",
   "readr",
 )
 pak::pak(pkgs)

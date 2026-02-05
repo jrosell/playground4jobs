@@ -6,14 +6,11 @@ pkgs <- rlang::chr(
   "shiny",
   "digest",
   "ps",
-  "callr",
   "processx", # TODO to get the cmdline parameter not only R
   "dplyr",
   "stringr",
   "connectapi",
-  "dplyr",
   "readr",
-  "DT"
 )
 # pak::pak(pkgs)
 libs <- ifelse(names(pkgs) == "", pkgs, names(pkgs))
@@ -144,7 +141,7 @@ server <- function(input, output, session) {
     local_running <- get_local_running()
     output$job_running <- renderTable({     
       local_running |> 
-        filter(str_detect(cmdline, input$guid))
+        filter(stringr::str_detect(cmdline, input$guid))
     })    
 
     
@@ -176,4 +173,4 @@ server <- function(input, output, session) {
   
 }
 
-shinyApp(ui, server)
+shiny::shinyApp(ui, server)

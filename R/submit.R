@@ -10,10 +10,9 @@ submit_content <- function(guid, data) {
     }
 }
 
-get_local_running <- function() {
-  library(ps)
-  running <- ps(columns = "*")
-  running |> select(cmdline,pid,ppid,name,status,user,rss,created)
+get_local_running <- function() {  
+  running <- ps::ps(columns = "*")
+  running |> dplyr::select(cmdline,pid,ppid,name,status,user,rss,created)
 }
 
 get_running_ids <- function(guid = NULL, id = NULL) {
@@ -22,7 +21,7 @@ get_running_ids <- function(guid = NULL, id = NULL) {
         if (is.null(guid)) {
             stop("Connect jobs require content GUID")
         }
-        client <- connect()        
+        client <- connectapi::connect()        
         item <- content_item(client, guid)
         if (!is.null(id)) {   
             running_ids <- get_jobs(item) |> filter(id == id, status == 0) |> pull(id)
@@ -38,7 +37,7 @@ get_running_ids <- function(guid = NULL, id = NULL) {
         return(as.character(running_ids))
       }
       running_ids <- running  |>
-          filter(str_detect(cmdline, guid)) |>
+          filter(stringr::str_detect(cmdline, guid)) |>
           pull(pid)
     }
   as.character(running_ids)
