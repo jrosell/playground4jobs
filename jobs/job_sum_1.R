@@ -1,13 +1,14 @@
 # Prepare ----
-stopifnot(requireNamespace("rlang"))
-rlang::check_installed("pak")
+pak::pak("rlang")
 pkgs <- rlang::chr(
   "shiny",
   "digest",
   "ps",
+  "processx",
   "dplyr",
   "stringr",
-  "readr",
+  "connectapi",
+  "readr"
 )
 pak::pak(pkgs)
 libs <- ifelse(names(pkgs) == "", pkgs, names(pkgs))

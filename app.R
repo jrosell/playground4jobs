@@ -1,8 +1,6 @@
 # Prepare ----
-
-stopifnot(requireNamespace("rlang"))
-rlang::check_installed("pak")
-pkgs <- rlang::chr(
+pkgs <- rlang::chr( 
+  "rlang",
   "shiny",
   "digest",
   "ps",
@@ -10,9 +8,8 @@ pkgs <- rlang::chr(
   "dplyr",
   "stringr",
   "connectapi",
-  "readr",
+  "readr"
 )
-# pak::pak(pkgs)
 libs <- ifelse(names(pkgs) == "", pkgs, names(pkgs))
 libs <- if (length(libs) == 0) pkgs else libs
 lapply(libs, library, quiet = TRUE, character.only = TRUE) |> invisible()
@@ -21,7 +18,8 @@ lapply(libs, library, quiet = TRUE, character.only = TRUE) |> invisible()
 options(
   shiny.autoreload = FALSE,
   shiny.trace = FALSE,
-  shiny.fullstacktrace = FALSE
+  shiny.fullstacktrace = FALSE,
+  shiny.minified = TRUE
 )
 source("R/submit.R")
 
