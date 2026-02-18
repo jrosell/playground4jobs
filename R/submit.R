@@ -87,17 +87,22 @@ submit_content_local <- function(
   readr::write_rds(data, file.path(output_dir, "input_data.rds"))
   stdout_file <- file.path(output_dir, "run.out")
   stderr_file <- file.path(output_dir, "run.err")
-  rig_bin <- Sys.which("rig")
-  if (rig_bin == "") {
-    stop("rig executable not found on PATH")
-  }
+  r_bin <- Sys.which("rig")
   args <- c(
     "run",
     "--r-version", r_version,
     "--script", basename(guid)
   )
+  if (r_bin == "") {
+    warning("rig executable not found on PATH")
+    r_bin <- Sys.which("R")
+    args <- c(
+      "--file", basename(guid)
+    )
+  }
+  
   p <- processx::process$new(
-    command = rig_bin,
+    command = r_bin,
     args    = args,
     wd      = output_dir,
     env     = c(Sys.getenv(), JOB_KEY = job_key),
